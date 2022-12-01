@@ -1,5 +1,7 @@
 create_project Build_script ./build -part xc7a100tcsg324-1
 
+set_property board_part digilentinc.com:arty-a7-100:part0:1.1 [current_project]
+
 add_files -norecurse ./axi4lite_interface.sv
 add_files -norecurse ./register_interface_v1_0_S00_AXI.v
 add_files -norecurse ./leds.sv
@@ -11,7 +13,8 @@ update_compile_order -fileset sources_1
 add_files -fileset constrs_1 -norecurse ./leds.xdc
 
 set date [clock format [clock seconds] -format {%m%d%Y}]
-set_property generic "BUILD_DATE_i=32'h$date" [current_fileset]
+set commit [exec git rev-parse HEAD]
+set_property generic "BUILD_DATE_i=32'h$date COMMIT_i=160'h$commit" [current_fileset]
 set_property STEPS.WRITE_BITSTREAM.ARGS.BIN_FILE true [get_runs impl_1]
 
 launch_runs impl_1 -to_step write_bitstream -jobs 4
